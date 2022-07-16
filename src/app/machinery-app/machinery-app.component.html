@@ -1,0 +1,142 @@
+<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet"/>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+  <a class="navbar-brand mx-2" style="color:white;" routerLink="/users" routerLinkActive="active-link">Rental machinery</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarColor02" aria-controls="navbarColor02" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse" id="navbarColor02">
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item active">
+        <a class="nav-link" (click)="onOpenModal('add')">Добавить спец технику<span class="sr-only"></span></a>
+      </li>
+    </ul>
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item active">
+        <a class="nav-link" routerLink="/users" routerLinkActive="active-link">Пользователи<span class="sr-only"></span></a>
+      </li>
+      <li class="nav-item active">
+        <a class="nav-link" routerLink="/state" routerLinkActive="active-link">Субъекты<span class="sr-only"></span></a>
+      </li>
+      <li class="nav-item active">
+        <a class="nav-link" routerLink="/service" routerLinkActive="active-link">Услуги<span class="sr-only"></span></a>
+      </li>
+    </ul>
+    <form class="form-inline my-2 my-lg-0" >
+      <input type="search" (ngModelChange)="searchMachinery(key.value)" #key="ngModel" ngModel name="key" id="searchName" class="form-control mr-sm-2" placeholder="Поиск в спец технике" required>
+    </form>
+  </div>
+</nav>
+<div class="container" id ="main-container"  >
+  <div class="row">
+    <div *ngFor="let machinery of machinerys" class="col-md-6 col-xs-3">
+      <div class="card m-b-30">
+        <div class="card-body row">
+          <div class="col-6 card-title align-self-center mb-0" >
+            <h5> {{machinery?.machineryName}}</h5>
+          </div>
+          <div class="col-6 card-title align-self-center mb-0" >
+            <h5> {{machinery?.description}}</h5>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="float-right btn-group btn-group-sm">
+            <a (click) = "onOpenModal('edit', machinery)"  class="btn btn-primary tooltips" data-placement="top" data-toggle="tooltip" data-original-title="Edit"><i class="fa fa-pencil"></i> </a>
+            <a (click) = "onOpenModal('delete', machinery)"  class="btn btn-secondary tooltips" data-placement="top" data-toggle="tooltip" data-original-title="Delete"><i class="fa fa-times"></i></a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- Add Machinery Modal -->
+  <div class="modal fade" id="addMachineryModal" tabindex="-1" role="dialog" aria-labelledby="addMachineryModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="addMachineryModalLabel">Add machinery</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form #addForm= "ngForm" (ngSubmit)="onAddMachinery(addForm)">
+            <div class="form-group" >
+              <label for="machineryName">Название спец техники</label>
+              <input type="text" ngModel name="machineryName" id = "machineryName" class="form-control"  placeholder="Название" required>
+            </div>
+            <div class="form-group" >
+              <label for="description">Описание</label>
+              <input type="text" ngModel name="description" id = "description" class="form-control"  placeholder="Описание" required>
+            </div>
+            <div class="modal-footer">
+              <button type="button" id="add-machinery-form" class="btn btn-secondary" data-dismiss="modal">Close</button>
+              <button [disabled]="addForm.invalid" type="submit" class="btn btn-primary" >Save changes</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Edit modal -->
+  <div class="modal fade" id="editMachineryModal" tabindex="-1" role="dialog" aria-labelledby="machineryEditModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="updateMachineryModalLabel">Edit Machinery </h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form #updateForm ="ngForm">
+            <div class="form-group">
+              <label for="name">Название спец техники</label>
+              <input type="text" ngModel = "{{updateMachinery?.machineryName}}" name="machineryName" class="form-control" id="name" aria-describedby="emailHelp" placeholder="Название">
+            </div>
+            <div class="form-group" >
+              <label for="description">Описание</label>
+              <input type="text" ngModel = "{{updateMachinery?.description}}" name="description" id = "description1" class="form-control"  placeholder="Описание" required>
+            </div>
+            <input type="hidden" ngModel = "{{updateMachinery?.id}}"  name="id" class="form-control" id="id" placeholder="Email">
+            <div class="modal-footer">
+              <button type="button" id="" data-dismiss="modal" class="btn btn-secondary">Close</button>
+              <button [disabled]="updateForm.invalid" (click)="onUpdateMachinery(updateForm.value)" data-dismiss="modal" class="btn btn-primary" >Save changes</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Delete modal -->
+  <div class="modal fade" id="deleteMachineryModal" tabindex="-1" role="dialog" aria-labelledby="deleteModelLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="deleteModelLabel">Delete Machinery</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <p>Are you sure you want to delete machinery  ?</p>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
+            <button (click)="onDeleteMachinery(deleteMachinery!.id)" class="btn btn-danger" data-dismiss="modal">Yes</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Notification for no machinerys -->
+  <div *ngIf="machinerys?.length == 0" class="col-lg-12 col-md-12 col-xl-12">
+    <div class="alert alert-info" role="alert">
+      <h4 class="alert-heading">NO MACHINERYS!</h4>
+      <p>No Machinerys were found.</p>
+    </div>
+  </div>
+</div>
+<router-outlet></router-outlet>
